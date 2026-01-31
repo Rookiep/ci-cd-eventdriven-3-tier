@@ -51,15 +51,23 @@ pipeline {
     }
 }
 
-   stage('OWASP Dependency Check') {
-            steps {
-                dependencyCheckAnalyzer(
-                    scanPath: "${WORKSPACE}",
-                    suppressionFile: '',
-                    failBuildOnCVSS: 7.0
-                )
-            }
-        }
+       stage('OWASP Dependency Check') {
+          steps {
+        dependencyCheck(
+            additionalArguments: '--scan .',
+            odcInstallation: 'Default',
+            failBuildOnCVSS: 7
+        )
+    }
+}
+
+      stage('Publish Dependency Check Report') {
+          steps {
+        dependencyCheckPublisher(
+            pattern: '**/dependency-check-report.xml'
+        )
+    }
+}
 
         stage('Trivy Image Scan') {
             steps {
