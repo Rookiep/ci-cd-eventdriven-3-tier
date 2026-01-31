@@ -55,7 +55,7 @@ pipeline {
           steps {
               dependencyCheck(
                odcInstallation: 'Default',
-    a          dditionalArguments: '--scan . --failOnCVSS 7',
+               additionalArguments: '--scan . --failOnCVSS 7',
                stopBuild: true
 )
 
