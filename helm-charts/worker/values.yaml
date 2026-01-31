@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: your-dockerhub-username/worker
+  pullPolicy: IfNotPresent
+  tag: latest
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+keda:
+  enabled: true
+  queueName: task_queue
+  pollingInterval: 30
+  cooldownPeriod: 60
