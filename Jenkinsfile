@@ -49,7 +49,7 @@ pipeline {
                 -Dsonar.projectKey=ci-cd-event-driven \
                 -Dsonar.sources=/usr/src \
                 -Dsonar.host.url=http://host.docker.internal:9000 \
-                -Dsonar.login=admin
+                -Dsonar.login=$SONAR_TOKEN
             '''
         }
     }
