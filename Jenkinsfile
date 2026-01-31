@@ -34,38 +34,40 @@ pipeline {
             }
         }
 
-      stage('SonarQube Scan') {
-    environment {
-        SONAR_TOKEN = credentials('sonar-token')
-    }
-    steps {
-        sh '''
-        docker run --rm --network host \
-          -v "$WORKSPACE:/usr/src" \
-          sonarsource/sonar-scanner-cli \
-          -Dsonar.projectKey=ci-cd-event-driven \
-          -Dsonar.sources=/usr/src \
-          -Dsonar.host.url=http://localhost:9000 \
-          -Dsonar.login=$SONAR_TOKEN
-        '''
-    }
-}
+        stage('SonarQube Scan') {
+            environment {
+                SONAR_TOKEN = credentials('sonar-token')
+            }
+            steps {
+                sh '''
+                docker run --rm --network host \
+                  -v "$WORKSPACE:/usr/src" \
+                  sonarsource/sonar-scanner-cli \
+                  -Dsonar.projectKey=ci-cd-event-driven \
+                  -Dsonar.sources=/usr/src \
+                  -Dsonar.host.url=http://localhost:9000 \
+                  -Dsonar.login=$SONAR_TOKEN
+                '''
+            }
+        }
 
-       stage('OWASP Dependency Check') {
-          steps {
-              dependencyCheck(
-               odcInstallation: 'Default',
-               additionalArguments: '--scan . --failOnCVSS 7',
-               stopBuild: true
-)
+        stage('OWASP Dependency Check') {
+            steps {
+                dependencyCheck(
+                    odcInstallation: 'Default',
+                    additionalArguments: '--scan . --failOnCVSS 7',
+                    stopBuild: true
+                )
+            }
+        }
 
-      stage('Publish Dependency Check Report') {
-          steps {
-             dependencyCheckPublisher(
-            pattern: '**/dependency-check-report.xml'
-        )
-    }
-}
+        stage('Publish Dependency Check Report') {
+            steps {
+                dependencyCheckPublisher(
+                    pattern: '**/dependency-check-report.xml'
+                )
+            }
+        }
 
         stage('Trivy Image Scan') {
             steps {
