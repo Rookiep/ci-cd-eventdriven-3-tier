@@ -16,12 +16,9 @@ async function connectRabbit() {
   console.log("Connected to RabbitMQ");
 }
 
-app.post("/task", async (req, res) => {
-  const { task } = req.body;
-  channel.sendToQueue(QUEUE, Buffer.from(task));
-  res.send({ status: "queued", task });
-});
+async function startServer() {
+  await connectRabbit();  // wait for RabbitMQ connection
+  app.listen(3000, () => console.log("API running on 3000"));
+}
 
-connectRabbit();
-
-app.listen(3000, () => console.log("API running on 3000"));
+startServer();
