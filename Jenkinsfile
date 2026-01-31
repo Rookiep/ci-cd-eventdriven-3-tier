@@ -34,22 +34,22 @@ pipeline {
             }
         }
 
-        stage('SonarQube Scan') {
-            environment {
-                SONAR_TOKEN = credentials('sonar-token')
-            }
-            steps {
-                sh '''
-                docker run --rm --network host \
-                  -v "$WORKSPACE:/usr/src" \
-                  sonarsource/sonar-scanner-cli \
-                  -Dsonar.projectKey=ci-cd-event-driven \
-                  -Dsonar.sources=/usr/src \
-                  -Dsonar.host.url=http://host.docker.internal:9000 \
-                  -Dsonar.login=$SONAR_TOKEN
-                '''
-            }
-        }
+      stage('SonarQube Scan') {
+    environment {
+        SONAR_TOKEN = credentials('sonar-token')
+    }
+    steps {
+        sh '''
+        docker run --rm --network host \
+          -v "$WORKSPACE:/usr/src" \
+          sonarsource/sonar-scanner-cli \
+          -Dsonar.projectKey=ci-cd-event-driven \
+          -Dsonar.sources=/usr/src \
+          -Dsonar.host.url=http://localhost:9000 \
+          -Dsonar.login=$SONAR_TOKEN
+        '''
+    }
+}
 
         stage('OWASP Dependency Check') {
             steps {
