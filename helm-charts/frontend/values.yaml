@@ -1,0 +1,8 @@
+replicaCount: 2
+image:
+  repository: frontend
+  tag: local
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 80
