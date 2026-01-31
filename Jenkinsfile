@@ -47,7 +47,7 @@ pipeline {
             }
         }
 
-         stage('OWASP Dependency Check') {
+        stage('OWASP Dependency Check') {
             steps {
                 sh '''
                 mkdir -p ${DC_DATA}
@@ -73,18 +73,10 @@ pipeline {
                 }
             }
         }
-
-        stage('Run Local App (Optional)') {
-            steps {
-                sh 'docker-compose up -d --build'
-                sleep 10
-            }
-        }
     }
 
     post {
         always {
-            sh 'docker-compose down || true'
             archiveArtifacts artifacts: 'dependency-check-report/**', allowEmptyArchive: true
         }
         failure {
