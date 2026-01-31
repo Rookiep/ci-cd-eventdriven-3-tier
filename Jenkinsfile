@@ -3,8 +3,6 @@ pipeline {
 
     environment {
         DOCKER_IMAGES = "frontend api worker"
-        SONAR_HOST = "http://localhost:9000"
-        SONAR_LOGIN = "admin"
         DC_DATA = "${WORKSPACE}/dependency-check-data"
     }
 
@@ -19,41 +17,39 @@ pipeline {
         stage('Build Docker Images') {
             parallel {
                 stage('Frontend') {
-                    steps { sh 'docker build -t frontend:local frontend' }
+                    steps {
+                        sh 'docker build -t frontend:local frontend'
+                    }
                 }
                 stage('API') {
-                    steps { sh 'docker build -t api:local api-server' }
+                    steps {
+                        sh 'docker build -t api:local api-server'
+                    }
                 }
                 stage('Worker') {
-                    steps { sh 'docker build -t worker:local worker' }
+                    steps {
+                        sh 'docker build -t worker:local worker'
+                    }
                 }
             }
         }
 
-       stage('SonarQube Scan') {
-    steps {
-        script {
-            // Start SonarQube server
-            sh 'docker rm -f sonarqube || true'
-            sh 'docker run -d --name sonarqube -p 9000:9000 sonarqube:lts'
-
-            echo "Waiting for SonarQube to start..."
-            sleep 60
-
-            // Run Sonar Scanner inside Docker
-            sh '''
-            docker run --rm \
-                --network host \
-                -v "${WORKSPACE}:/usr/src" \
-                sonarsource/sonar-scanner-cli \
-                -Dsonar.projectKey=ci-cd-event-driven \
-                -Dsonar.sources=/usr/src \
-                -Dsonar.host.url=http://host.docker.internal:9000 \
-                -Dsonar.login=$SONAR_TOKEN
-            '''
+        stage('SonarQube Scan') {
+            environment {
+                SONAR_TOKEN = credentials('sonar-token')
+            }
+            steps {
+                sh '''
+                docker run --rm --network host \
+                  -v "$WORKSPACE:/usr/src" \
+                  sonarsource/sonar-scanner-cli \
+                  -Dsonar.projectKey=ci-cd-event-driven \
+                  -Dsonar.sources=/usr/src \
+                  -Dsonar.host.url=http://host.docker.internal:9000 \
+                  -Dsonar.login=$SONAR_TOKEN
+                '''
+            }
         }
-    }
-}
 
         stage('OWASP Dependency Check') {
             steps {
