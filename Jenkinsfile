@@ -61,21 +61,22 @@ pipeline {
             }
         }
 
-       
-  stage('Trivy Image Scan') {
-    steps {
-        script {
-            for (img in DOCKER_IMAGES.split()) {
-                sh """
-                docker run --rm \
-                  -v /var/run/docker.sock:/var/run/docker.sock \
-                  aquasec/trivy:latest \
-                  image --exit-code 1 --severity HIGH,CRITICAL ${img}:local
-                """
+        stage('Trivy Image Scan') {
+            steps {
+                script {
+                    for (img in DOCKER_IMAGES.split()) {
+                        sh """
+                        docker run --rm \
+                          -v /var/run/docker.sock:/var/run/docker.sock \
+                          aquasec/trivy:latest \
+                          image --exit-code 1 --severity HIGH,CRITICAL ${img}:local
+                        """
+                    }
+                }
             }
         }
-    }
-}
+
+    } // <-- closes the stages block
 
     post {
         always {
