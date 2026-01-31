@@ -30,22 +30,30 @@ pipeline {
             }
         }
 
-        stage('SonarQube Scan') {
-            steps {
-                sh '''
-                docker rm -f sonarqube || true
-                docker run -d --name sonarqube -p 9000:9000 sonarqube:lts
-                echo "Waiting for SonarQube..."
-                sleep 60
+       stage('SonarQube Scan') {
+    steps {
+        script {
+            // Start SonarQube server
+            sh 'docker rm -f sonarqube || true'
+            sh 'docker run -d --name sonarqube -p 9000:9000 sonarqube:lts'
 
-                sonar-scanner \
-                  -Dsonar.projectKey=ci-cd-event-driven \
-                  -Dsonar.sources=. \
-                  -Dsonar.host.url=$SONAR_HOST \
-                  -Dsonar.login=$SONAR_LOGIN
-                '''
-            }
+            echo "Waiting for SonarQube to start..."
+            sleep 60
+
+            // Run Sonar Scanner inside Docker
+            sh '''
+            docker run --rm \
+                --network host \
+                -v "${WORKSPACE}:/usr/src" \
+                sonarsource/sonar-scanner-cli \
+                -Dsonar.projectKey=ci-cd-event-driven \
+                -Dsonar.sources=/usr/src \
+                -Dsonar.host.url=http://host.docker.internal:9000 \
+                -Dsonar.login=admin
+            '''
         }
+    }
+}
 
         stage('OWASP Dependency Check') {
             steps {
