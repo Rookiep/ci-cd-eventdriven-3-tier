@@ -61,14 +61,7 @@ pipeline {
             }
         }
 
-        stage('Publish Dependency Check Report') {
-            steps {
-                dependencyCheckPublisher(
-                    pattern: '**/dependency-check-report.xml'
-                )
-            }
-        }
-
+       
         stage('Trivy Image Scan') {
             steps {
                 script {
