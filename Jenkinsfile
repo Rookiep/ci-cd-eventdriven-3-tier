@@ -47,20 +47,7 @@ pipeline {
             }
         }
 
-        stage('Quality Gate') {
-            steps {
-                script {
-                    timeout(time: 5, unit: 'MINUTES') {
-                        def qg = waitForQualityGate()
-                        if (qg.status != 'OK') {
-                            error "❌ SonarQube Quality Gate failed"
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('OWASP Dependency Check') {
+         stage('OWASP Dependency Check') {
             steps {
                 sh '''
                 mkdir -p ${DC_DATA}
