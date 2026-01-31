@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "rabbitmq.fullname" . }}
+  labels:
+    app: {{ include "rabbitmq.name" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -17,7 +19,14 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 5672
-            - containerPort: 15672
+            - name: amqp
+              containerPort: 5672
+            - name: management
+              containerPort: 15672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: {{ .Values.auth.username | quote }}
+            - name: RABBITMQ_DEFAULT_PASS
+              value: {{ .Values.auth.password | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
