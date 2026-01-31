@@ -51,20 +51,13 @@ pipeline {
     }
 }
 
-        stage('OWASP Dependency Check') {
+   stage('OWASP Dependency Check') {
             steps {
-                sh '''
-                mkdir -p ${DC_DATA}
-
-                docker run --rm \
-                  -v ${WORKSPACE}:/src \
-                  -v ${DC_DATA}:/usr/share/dependency-check/data \
-                  owasp/dependency-check:latest \
-                  --scan /src \
-                  --format "HTML" \
-                  --out /src/dependency-check-report \
-                  --failOnCVSS 7
-                '''
+                dependencyCheckAnalyzer(
+                    scanPath: "${WORKSPACE}",
+                    suppressionFile: '',
+                    failBuildOnCVSS: 7.0
+                )
             }
         }
 
