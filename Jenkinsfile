@@ -53,17 +53,15 @@ pipeline {
 
        stage('OWASP Dependency Check') {
           steps {
-        dependencyCheck(
-            additionalArguments: '--scan .',
-            odcInstallation: 'Default',
-            failBuildOnCVSS: 7
-        )
-    }
-}
+              dependencyCheck(
+               odcInstallation: 'Default',
+    a          dditionalArguments: '--scan . --failOnCVSS 7',
+               stopBuild: true
+)
 
       stage('Publish Dependency Check Report') {
           steps {
-        dependencyCheckPublisher(
+             dependencyCheckPublisher(
             pattern: '**/dependency-check-report.xml'
         )
     }
