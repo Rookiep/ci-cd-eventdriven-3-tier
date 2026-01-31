@@ -1,18 +1,11 @@
-async function sendTask() {
+function sendTask() {
   const task = document.getElementById("task").value;
 
-  if (!task) {
-    alert("Please enter a task");
-    return;
-  }
-
-  await fetch("http://api:3000/task", {
+  fetch("/task", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ task })
   });
 
-  alert("Task sent to queue!");
+  alert("Task sent!");
 }
