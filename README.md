@@ -153,6 +153,7 @@ password: guest
 ☸️ Kubernetes Deployment (Helm + Argo CD)
 Install Argo CD
 kubectl create namespace argocd
+
 kubectl apply -n argocd \
   -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
@@ -217,4 +218,4 @@ Full observability stack (Prometheus & Grafana)
 
 🧠 Interview-Ready Summary
 
-“I built a complete event-driven DevSecOps CI/CD system using Jenkins for CI, Helm for packaging, Argo CD for GitOps-based CD, RabbitMQ for messaging, KEDA for autoscaling, and Prometheus/Grafana for observability — all deployed on Kubernetes.”
+“I built a complete event-driven DevSecOps CI/CD system using Jenkins for CI, Helm for packaging, Argo CD for GitOps-based CD, RabbitMQ for messaging, KEDA for autoscaling rabbitmq depth, and Prometheus/Grafana for observability — all deployed on Kubernetes.”
