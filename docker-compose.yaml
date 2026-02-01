@@ -1,27 +1,47 @@
 version: '3.9'
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
 
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
   api:
     build: ./api-server
+    container_name: api-server
     ports:
       - "5000:5000"
     environment:
       - RABBITMQ_HOST=rabbitmq
-    depends_on: [rabbitmq]
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - redis
 
   worker:
     build: ./worker
+    container_name: worker
     environment:
       - RABBITMQ_HOST=rabbitmq
-    depends_on: [rabbitmq]
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - redis
 
   frontend:
     build: ./frontend
+    container_name: frontend
     ports:
       - "8081:80"
-    depends_on: [api]
+    depends_on:
+      - api
